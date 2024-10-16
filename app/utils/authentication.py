@@ -29,3 +29,6 @@ def authenticate_admin():
 
 def authenticate_supervisor():
     return authenticate_role(['admin', 'supervisor'])
+
+def authenticate_employer():
+    return authenticate_role(['employer'])

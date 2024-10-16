@@ -19,3 +19,24 @@ class EmployerRepository:
         db.session.add(employer)
         db.session.commit()
         return employer
+    
+    @staticmethod
+    def create_employer(employer):
+        db.session.add(employer)
+        db.session.commit()
+
+    @staticmethod
+    def get_all_employers():
+        return Employer.query.all()
+
+    @staticmethod
+    def get_employer_by_id(id):
+        return Employer.query.get(id)
+
+    @staticmethod
+    def update_employer():
+        db.session.commit()
+
+    @staticmethod
+    def find_by_email_or_phone(email, phone):
+        return Employer.query.filter((Employer.email == email) | (Employer.phone == phone)).first()

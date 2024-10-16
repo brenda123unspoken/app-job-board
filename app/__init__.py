@@ -25,8 +25,8 @@ def create_app():
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(member_bp, url_prefix='/members')
-    app.register_blueprint(employer_bp, url_prefix='/api/employer')
-    app.register_blueprint(job_bp, url_prefix='/api/job')  
+    app.register_blueprint(employer_bp, url_prefix='/api/employers')
+    app.register_blueprint(job_bp, url_prefix='/api/jobs')  
 
 
     return app

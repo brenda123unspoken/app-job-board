@@ -41,3 +41,16 @@ class JobRepository:
             db.session.commit()
             return job
         return None
+    
+
+    @staticmethod
+    def get_job_by_id(id):
+        return Job.query.get(id)
+
+    @staticmethod
+    def get_jobs_by_employer(employer_id):
+        return Job.query.filter_by(employer_id=employer_id).all()
+
+    @staticmethod
+    def get_all_jobs():
+        return Job.query.all()

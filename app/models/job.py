@@ -23,8 +23,8 @@ class Job(db.Model):
             "title": self.title,
             "description": self.description,
             "salary": self.salary,
-            "deadline": self.deadline,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "deadline": self.deadline.isoformat() if self.deadline else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
             "employer_id": self.employer_id  # Employer who posted the job
         }

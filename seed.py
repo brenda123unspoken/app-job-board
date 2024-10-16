@@ -78,7 +78,7 @@ def seed_members(count=10):
             'name': fake.name(),
             'phone': fake.phone_number(),
             'email': fake.email(),
-            'role': fake.random_element(elements=("member", "admin")),
+            'role': fake.random_element(elements=("member", "admin", "supervisor")),
             'is_active': True
         }
         if Member.query.filter_by(email=member_data['email']).first() or Member.query.filter_by(phone=member_data['phone']).first():
@@ -95,11 +95,11 @@ def seed_employers(count=5):
         employer_data = {
             'company_name': fake.company(),
             'email': fake.company_email(),
-            'phone_number': fake.phone_number(),
+            'phone': fake.phone_number(),
             'about': fake.text(),
             'password': 'password123'
         }
-        if Employer.query.filter_by(email=employer_data['email']).first() or Employer.query.filter_by(phone_number=employer_data['phone_number']).first():
+        if Employer.query.filter_by(email=employer_data['email']).first() or Employer.query.filter_by(phone=employer_data['phone']).first():
             continue
         employer = Employer(**employer_data)
         employer.set_password('password123')
