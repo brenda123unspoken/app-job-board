@@ -1,6 +1,10 @@
-from app import db
+from app.extensions import db
 import bcrypt
 from datetime import datetime
+
+from app.models.saved_jobs import saved_jobs
+
+
 
 class Member(db.Model):
     __tablename__ = 'member'
@@ -12,6 +16,14 @@ class Member(db.Model):
     role = db.Column(db.String(20), nullable=False, default="member")
     password_hash = db.Column(db.String(128), nullable=False)
     is_active = db.Column(db.Boolean, default=True)  # Soft delete field
+
+    # Define relationship to JobView
+    job_views = db.relationship('JobView', back_populates='member')
+    applications = db.relationship('Application', back_populates='member')
+    saved_jobs = db.relationship('Job', secondary=saved_jobs, lazy='dynamic', back_populates='saved_by')
+
+    
+    
     
     def to_dict(self):
         return {
@@ -20,7 +32,9 @@ class Member(db.Model):
             "phone": self.phone,
             "email": self.email,
             "role": self.role,
-            "is_active": self.is_active 
+            "is_active": self.is_active, 
+            "saved_jobs": [job.to_dict() for job in self.saved_jobs]  # Assuming Job has a to_dict method
+        
         }
 
     def set_password(self, password):
@@ -56,3 +70,15 @@ class Member(db.Model):
     def restore(self):
         self.is_active = True
         db.session.commit()
+
+    def save_job(self, job):
+        """Add a job to the saved jobs."""
+        if job not in self.saved_jobs:
+            self.saved_jobs.append(job)
+            db.session.commit()  # Commit the transaction after modifying the relationship
+
+    def unsave_job(self, job):
+        """Remove a job from the saved jobs."""
+        if job in self.saved_jobs:
+            self.saved_jobs.remove(job)
+            db.session.commit()     

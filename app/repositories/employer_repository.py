@@ -6,7 +6,7 @@ class EmployerRepository:
     @staticmethod
     def find_by_identifier(identifier):
         """Find an employer by a unique identifier like email or username."""
-        return Employer.query.filter((Employer.email == identifier) | (Employer.identifier == identifier)).first()
+        return Employer.query.filter(Employer.email == identifier).first()
 
     @staticmethod
     def find_by_id(employer_id):

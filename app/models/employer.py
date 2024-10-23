@@ -1,4 +1,4 @@
-from app import db
+from app.extensions import db
 import bcrypt
 from datetime import datetime
 
@@ -17,7 +17,7 @@ class Employer(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)  # Updated when record is modified
     
     # Relationship with jobs
-    jobs = db.relationship('Job', backref='employer', lazy=True)
+    jobs = db.relationship('Job', back_populates='employer', lazy=True)
     
 
     def __init__(self, company_name, email, phone, about, password):

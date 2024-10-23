@@ -82,3 +82,25 @@ class MemberRepository:
     def get_member_by_email(email):
         """Fetch a member by their email"""
         return Member.query.filter_by(email=email).first()
+
+    @staticmethod
+    def save_job(member_id, job_id):
+        """ Save a job to a member """
+        member = Member.query.get(member_id)
+        job = Job.query.get(job_id)
+        if member and job:
+            member.saved_jobs.append(job)
+            db.session.commit()
+            return member
+        return None
+
+    @staticmethod
+    def unsave_job(member_id, job_id):
+        """ Unsave a job from a member """
+        member = Member.query.get(member_id)
+        job = Job.query.get(job_id)
+        if member and job in member.saved_jobs:
+            member.saved_jobs.remove(job)
+            db.session.commit()
+            return member
+        return None    

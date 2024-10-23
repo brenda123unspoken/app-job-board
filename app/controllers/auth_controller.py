@@ -1,6 +1,7 @@
 from flask import request, Blueprint
 from flask_restful import Resource, Api
 from app.models.member import Member
+from app.models.employer import Employer
 from flask_jwt_extended import create_access_token
 
 auth_bp = Blueprint('auth_bp', __name__)
@@ -17,10 +18,17 @@ class AuthResource(Resource):
 
         if member and member.check_password(password):
             # Allow both Admin and Supervisor roles for authentication
-            if member.role in ['admin', 'supervisor']:
+            if member.role in ['admin', 'supervisor', 'member']:
                 # Generate JWT token with user's role and id
-                access_token = create_access_token(identity={"id": member.id, "role": member.role})
+                access_token = create_access_token(identity={"id": member.id, "role": member.role, "email": member.email})
                 return {"access_token": access_token}, 200
+
+        employer = Employer.query.filter_by(email=email).first()
+        if employer and employer.check_password(password):
+            # Generate JWT token for the employer
+            access_token = create_access_token(identity={"id": employer.id, "role": "employer", "email": employer.email})
+            return {"access_token": access_token}, 200
+        
 
         return {"error": "Invalid credentials or access denied"}, 401
 

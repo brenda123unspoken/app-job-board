@@ -72,3 +72,19 @@ class MemberService:
         member.role = new_role
         MemberRepository.save(member)
         return member
+
+    @staticmethod
+    def save_job(member, job):
+        """ Save a job to a member's saved jobs """
+        if job not in member.saved_jobs:
+            member.saved_jobs.append(job)
+            db.session.commit()
+        return member
+
+    @staticmethod
+    def unsave_job(member, job):
+        """ Unsave a job from a member's saved jobs """
+        if job in member.saved_jobs:
+            member.saved_jobs.remove(job)
+            db.session.commit()
+        return member    

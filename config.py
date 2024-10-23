@@ -20,4 +20,13 @@ class Config:
 
     
     PER_PAGE = 10  # Pagination
+     
+    # Flask-Mail settings
+    MAIL_SERVER = 'smtp.your-email-provider.com'  # Your SMTP server
+    MAIL_PORT = 587  # Port for TLS
+    MAIL_USE_TLS = True  # Enable TLS
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = 'your_email@example.com'  # Your email address
+    MAIL_PASSWORD = 'your_password'  # Your email password
+    MAIL_DEFAULT_SENDER = 'your_email@example.com'  # Default sender email
 

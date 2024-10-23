@@ -2,6 +2,8 @@ from flask import request, Blueprint
 from flask_restful import Resource, Api
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.member import Member
+from app.models.saved_jobs import saved_jobs
+from app.models.job import Job
 from app.repositories.member_repository import MemberRepository
 from app.services.member_services import MemberService
 from werkzeug.exceptions import BadRequest
@@ -73,6 +75,60 @@ class MemberResource(Resource):
 
         db.session.commit()
         return member.to_dict(), 200
+
+    def post(self, id):
+        """ Save a job for a member """
+        member = Member.query.get_or_404(id)
+
+        data = request.get_json()
+        job_id = data.get('job_id')
+
+        if not job_id:
+            return {"error": "job_id is required"}, 400
+
+        job = Job.query.get_or_404(job_id)
+
+        try:
+            # Assuming MemberService.save_job handles the saving logic
+            MemberService.save_job(member, job)
+            return {"message": "Job saved successfully"}, 200
+        except BadRequest as e:
+            return {"error": str(e)}, 400
+
+    def delete(self, id, job_id):
+        """ Unsave a job for a member """
+        member = Member.query.get_or_404(id)
+        job = Job.query.get_or_404(job_id)
+
+        try:
+            # Assuming MemberService.unsave_job handles the unsaving logic
+            MemberService.unsave_job(member, job)
+            return {"message": "Job unsaved successfully"}, 200
+        except BadRequest as e:
+            return {"error": str(e)}, 400
+
+    def get(self, id):
+        """ Get all saved jobs for a member """
+        member = Member.query.get_or_404(id)
+
+        # # Fetch all saved jobs for the member
+        # saved_jobs = SavedJob.query.filter_by(member_id=member.id).all()
+        
+        # # Extract job IDs from the saved jobs
+        # job_ids = [saved_job.job_id for saved_job in saved_jobs]
+        
+        # # Fetch job details
+        # jobs = Job.query.filter(Job.id.in_(job_ids)).all()
+        # Query the jobs that the member has saved using the saved_jobs association table
+        jobs = db.session.query(Job).join(saved_jobs, saved_jobs.c.job_id == Job.id)\
+        .filter(saved_jobs.c.member_id == member.id).all()
+
+        return {"saved_jobs": [job.to_dict() for job in jobs]}, 200
+
+        
+        
+
+
 
 class InactiveMemberResource(Resource):
     @jwt_required()
