@@ -17,7 +17,7 @@ class ApplicationResource(Resource):
         status = 'applied'
         application = ApplicationService.create_application(member_id, job_id, status)
         return {"message": "Application created successfully.", "application_id": application.id}, 201
-
+   
     @jwt_required()
     def get(self, application_id):
         """Get an application by its ID."""

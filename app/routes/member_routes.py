@@ -16,7 +16,7 @@ member_api = Api(member_bp)
 
 # Register the member resources
 member_api.add_resource(MemberListResource, '/')
-member_api.add_resource(MemberResource, '/<int:id>', '/<int:id>/saved_jobs')
+member_api.add_resource(MemberResource, '/<int:id>', '/<int:id>/saved_jobs', '/<int:id>/saved_jobs/<int:job_id>')
 member_api.add_resource(InactiveMemberResource, '/inactive')
 member_api.add_resource(RestoreMemberResource, '/<int:id>/restore')
 member_api.add_resource(ChangeRoleResource, '/<int:id>/role')

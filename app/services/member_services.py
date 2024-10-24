@@ -1,4 +1,6 @@
 from app.models.member import Member
+from app.models.job import Job
+from app import db
 from app.repositories.member_repository import MemberRepository
 from werkzeug.exceptions import BadRequest
 
@@ -72,19 +74,26 @@ class MemberService:
         member.role = new_role
         MemberRepository.save(member)
         return member
-
+    
     @staticmethod
-    def save_job(member, job):
-        """ Save a job to a member's saved jobs """
-        if job not in member.saved_jobs:
-            member.saved_jobs.append(job)
-            db.session.commit()
-        return member
-
-    @staticmethod
-    def unsave_job(member, job):
-        """ Unsave a job from a member's saved jobs """
+    def save_job(member: Member, job: Job):
+        # Check if the member has already saved this job
         if job in member.saved_jobs:
-            member.saved_jobs.remove(job)
-            db.session.commit()
-        return member    
+            raise ValueError(f"Job {job.id} is already saved by member {member.id}.")
+        # Add job to the member's saved jobs
+        member.saved_jobs.append(job)
+        db.session.commit()
+
+    @staticmethod
+    def unsave_job(member: Member, job: Job):
+        # Check if the member has saved this job
+        if job not in member.saved_jobs:
+            raise ValueError(f"Job {job.id} is not saved by member {member.id}.")
+        # Remove job from the member's saved jobs
+        member.saved_jobs.remove(job)
+        db.session.commit()
+
+    @staticmethod
+    def get_saved_jobs(member: Member):
+        return member.saved_jobs
+    

@@ -77,7 +77,7 @@
 
 from app.repositories.job_repository import JobRepository
 from app.websocket.socketio import notify_members_on_update, notify_members_on_delete
-
+from app.repositories.application_repository import ApplicationRepository
 from datetime import datetime
 
 class JobService:
@@ -152,4 +152,57 @@ class JobService:
         if not jobs:
             return {"message": "No jobs found for this employer."}, 404
         
-        return [job.to_dict() for job in jobs], 200
+        job_list = []
+        for job in jobs:
+            # Fetch applications for the job using ApplicationRepository
+            applications = ApplicationRepository.get_applications_by_job_id(job.id)
+            
+            # Prepare application details with member info
+            application_data = []
+            for application in applications:
+                member = application.member  # Assuming Application has a member relationship
+                application_data.append({
+                    'application_id': application.id,
+                    'status': application.status,
+                    'applied_at': application.applied_at.isoformat(),
+                    'member': {
+                        'member_id': member.id,
+                        'name': member.name,
+                        'email': member.email,
+                        'phone': member.phone
+                    }
+                })
+            
+            # Build the job response
+            job_list.append({
+                'job_id': job.id,
+                'title': job.title,
+                'description': job.description,
+                'salary': job.salary,
+                'applications': application_data  # Include applications here
+            })
+
+        return job_list, 200
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+       
+        

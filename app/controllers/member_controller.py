@@ -76,17 +76,11 @@ class MemberResource(Resource):
         db.session.commit()
         return member.to_dict(), 200
 
-    def post(self, id):
+    def post(self, id, job_id):
         """ Save a job for a member """
         member = Member.query.get_or_404(id)
-
-        data = request.get_json()
-        job_id = data.get('job_id')
-
-        if not job_id:
-            return {"error": "job_id is required"}, 400
-
         job = Job.query.get_or_404(job_id)
+        
 
         try:
             # Assuming MemberService.save_job handles the saving logic
